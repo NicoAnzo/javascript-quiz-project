@@ -22,16 +22,34 @@ class Quiz {
     }
 
     checkAnswer(answer) {
-        if (answer) {
+        if (answer === this.getQuestion().answer) {
             this.correctAnswers++;
         }
     }
 
     hasEnded() {
-        if (this.currentQuestionIndex === this.questions.length) {
+        if (this.currentQuestionIndex >= this.questions.length) {
             return true;
         }
 
         else return false;
     }
+
+    filterQuestionsByDifficulty(difficulty) {
+            
+        if (difficulty >= 1 && difficulty <= 3){
+            
+            this.questions = this.questions.filter(function (question) {
+                return question.difficulty === difficulty;
+            });
+        }
+    }
+
+    averageDifficulty() {
+        const sum = this.questions.reduce(function (acc, question){
+            return acc + question.difficulty;
+        }, 0) 
+        return sum / this.questions.length;
+    }
 }
+
