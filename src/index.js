@@ -46,12 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  SHOW INITIAL CONTENT  ************/
 
   // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
-  const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
-  const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+  function showCurrentTime() {
+    const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+    const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
 
-  // Display the time remaining in the time remaining container
-  const timeRemainingContainer = document.getElementById("timeRemaining");
-  timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+    // Display the time remaining in the time remaining container
+    const timeRemainingContainer = document.getElementById("timeRemaining");
+    timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+  }
 
   // Show first question
   showQuestion();
@@ -61,6 +63,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let timer;
 
+  function startTimer() {
+    
+    quiz.timeRemaining = quizDuration;
+    
+    timer = setInterval(() => {
+    quiz.timeRemaining--; 
+    
+    if (quiz.timeRemaining === 112) {
+      clearInterval(timer);
+      showResults();
+    } else {
+      showCurrentTime();
+    }
+  }, 1000); }
+
+  startTimer()
 
   /************  EVENT LISTENERS  ************/
 
@@ -141,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // let selectedAnswerIndex = null;
     choices.forEach(function (choice) {
       if (choice.checked) {
-        selectedAnswer = choice;
+        selectedAnswer = choice.value; ///
       }
 
     });
@@ -166,10 +184,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Show the end view (div#endView)
     endView.style.display = "flex";
 
+
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${questions.length} correct answers!`;
   }
-
 
 
   const restartQuizButton = document.getElementById('restartButton');
@@ -178,11 +196,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function restartQuiz() {
 
+    startTimer();
     endView.style.display = 'none';
     quizView.style.display = 'flex';
     quiz.currentQuestionIndex = 0;
     quiz.correctAnswers = 0;
-    shuffleQuestions();
+    quiz.shuffleQuestions();
     showQuestion();
   }
 
